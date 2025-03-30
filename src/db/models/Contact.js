@@ -1,26 +1,31 @@
 import { Schema, model } from 'mongoose';
 
-const phoneExp = /^\(\d{3}\) \d{3}-\d{4}$/;
-
-const contactSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
+const contactSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+    },
+    isFavorite: {
+      type: Boolean,
+      default: false,
+    },
+    contactType: {
+      type: String,
+      enum: ['work', 'home', 'personal'],
+      required: true,
+      default: 'personal',
+    },
   },
-  email: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    match: [phoneExp, 'Invalid phone number format. Use (XXX) XXX-XXXX'],
-    required: true,
-  },
-  favorite: {
-    type: Boolean,
-    default: false,
-  },
-});
+  { timestamps: true },
+);
 
 const ContactCollection = model('contact', contactSchema);
 
