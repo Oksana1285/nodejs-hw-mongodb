@@ -1,27 +1,37 @@
 import { Schema, model } from 'mongoose';
 
-const phoneExp = /^\(\d{3}\) \d{3}-\d{4}$/;
+const contactSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      validate: {
+        validator: function (value) {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        },
+        message: (props) => `${props.value} is not a valid email!`,
+      },
+      required: false,
+    },
+    isFavorite: {
+      type: Boolean,
+      default: false,
+    },
+    contactType: {
+      type: String,
+      enum: ['work', 'home', 'personal'],
+      required: true,
+      default: 'personal',
+    },
+  },
+  { versionKey: false, timestamps: true },
+);
 
-const contactSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    match: [phoneExp, 'Invalid phone number format. Use (XXX) XXX-XXXX'],
-    required: true,
-  },
-  favorite: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const ContactCollection = model('contact', contactSchema);
-
-export default ContactCollection;
+export const ContactCollection = model('contact', contactSchema);
