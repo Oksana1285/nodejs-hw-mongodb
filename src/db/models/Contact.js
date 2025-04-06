@@ -20,7 +20,7 @@ const contactSchema = new Schema(
       },
       required: false,
     },
-    isFavorite: {
+    isFavourite: {
       type: Boolean,
       default: false,
     },
