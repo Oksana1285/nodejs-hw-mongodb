@@ -16,10 +16,10 @@ const parseBoolean = (value) => {
 };
 
 export const parseFilterParams = (query) => {
-  const { type, isFavorite } = query;
+  const { type, isFavourite } = query;
 
   return {
     type: parseContactType(type),
-    isFavorite: parseBoolean(isFavorite),
+    isFavourite: parseBoolean(isFavourite),
   };
 };
