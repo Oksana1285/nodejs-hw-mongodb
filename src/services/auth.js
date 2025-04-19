@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
 import { UserCollection } from '../db/models/users.js';
-import { env } from '../utils/getEnvVar.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 import { TOKEN_PARAMS } from '../constants/constans.js';
 import { SessionCollection } from '../db/models/Sessions.js';
 
@@ -14,7 +14,7 @@ export const registerUser = async (userData) => {
     throw createHttpError.Conflict('Email in use');
   }
 
-  const hashedPassword = await bcrypt.hash(password, Number(env('SALT')));
+  const hashedPassword = await bcrypt.hash(password, Number(getEnvVar('SALT')));
 
   return await UserCollection.create({ ...userData, password: hashedPassword });
 };

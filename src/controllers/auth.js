@@ -1,4 +1,4 @@
-import { COOKIES, HTTP_STATUS, THREE_DAYS } from '../constants/constans.js';
+import { COOKIES, HTTP_STATUS, THIRTY_DAYS } from '../constants/constans.js';
 import {
   loginUser,
   logoutUser,
@@ -11,12 +11,12 @@ const { CREATED, OK, NO_CONTENT } = HTTP_STATUS;
 const setupSession = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
-    expire: new Date(Date.now() + THREE_DAYS),
+    expire: new Date(Date.now() + THIRTY_DAYS),
   });
 
   res.cookie('sessionId', session._id, {
     httpOnly: true,
-    expire: new Date(Date.now() + THREE_DAYS),
+    expire: new Date(Date.now() + THIRTY_DAYS),
   });
 };
 

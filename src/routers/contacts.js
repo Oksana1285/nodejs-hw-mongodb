@@ -35,8 +35,9 @@ contactsRouter.post(
 
 contactsRouter.patch(
   '/:contactId',
-  isValidId('contactId'),
   jsonParser,
+  isValidId('contactId'),
+
   validateBody(updateContactSchema),
   ctrlWrapper(updateUserController),
 );

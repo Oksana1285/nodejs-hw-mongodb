@@ -1,7 +1,10 @@
 import Joi from 'joi';
-import { JOI_VALIDATION_MSG, VALIDATION_LENGTH } from '../constants/index.js';
+import {
+  JOI_MSG_VALIDATION,
+  VALIDATION_LENGTH,
+} from '../constants/constans.js';
 const { MIN_LENGTH, MAX_LENGTH } = VALIDATION_LENGTH;
-const { MIN, MAX, STRING, EMAIL } = JOI_VALIDATION_MSG;
+const { MIN, MAX, STRING, EMAIL } = JOI_MSG_VALIDATION;
 
 export const registerUserSchema = Joi.object({
   name: Joi.string().min(MIN_LENGTH).max(MAX_LENGTH).required().messages({
