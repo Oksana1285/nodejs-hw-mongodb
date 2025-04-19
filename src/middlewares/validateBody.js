@@ -1,19 +1,24 @@
 import { HTTP_STATUS } from '../constants/constans.js';
+import createHttpError from 'http-errors';
 
 export const validateBody = (schema) => async (req, res, next) => {
   try {
     await schema.validateAsync(req.body, { abortEarly: false });
+
     next();
   } catch (error) {
-    const formattedErrors = error.details.map((detail) => ({
-      field: detail.path.join('.'),
-      message: detail.message.replace(/"/g, ''),
-    }));
+    const errorMessages = error.details
+      .map((detail) => detail.message.replace(/"/g, ''))
+      .join('; ');
 
-    return res.status(HTTP_STATUS.BAD_REQUEST).json({
-      status: 'fail',
-      message: 'Validation error',
-      errors: formattedErrors,
-    });
+    const httpError = createHttpError(
+      HTTP_STATUS.BAD_REQUEST,
+      'Bad request, body parameters are incorrect',
+      {
+        errors: errorMessages,
+      },
+    );
+
+    next(httpError);
   }
 };

@@ -9,6 +9,7 @@ export const authenticate = async (req, res, next) => {
   const authHeader = req.get('Authorization');
 
   if (!authHeader) {
+    console.log('Authorization header is missing.');
     return next(createHttpError(NOT_FOUND, 'Authorization header not found'));
   }
 
