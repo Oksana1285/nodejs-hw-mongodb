@@ -4,6 +4,7 @@ import { UserCollection } from '../db/models/users.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { TOKEN_PARAMS } from '../constants/constans.js';
 import { SessionCollection } from '../db/models/Sessions.js';
+import { generateAccessToken } from '../utils/generateAccessToken.js';
 
 export const registerUser = async (userData) => {
   const { email, password } = userData;
@@ -54,12 +55,17 @@ export const refreshUserSession = async ({ sessionId, refreshToken }) => {
   if (isSessionTokenExpired) {
     throw createHttpError.Unauthorized('Session token expired');
   }
+  const newAccessToken = generateAccessToken();
+  const newAccessTokenValidUntil = new Date(Date.now() + 15 * 60 * 1000);
 
   await SessionCollection.deleteOne({ _id: sessionId, refreshToken });
 
   return await SessionCollection.create({
     userId: session.userId,
-    ...TOKEN_PARAMS,
+    accessToken: newAccessToken,
+    accessTokenValidUntil: newAccessTokenValidUntil,
+    refreshToken: session.refreshToken,
+    refreshTokenValidUntil: session.refreshTokenValidUntil,
   });
 };
 
