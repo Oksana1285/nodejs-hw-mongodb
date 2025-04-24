@@ -9,6 +9,7 @@ import {
 } from '../services/contacts.js';
 
 import { parseAllParams } from '../utils/parseAllParams.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 const STATUS_OK = HTTP_STATUS.OK;
 const STATUS_CREATED = HTTP_STATUS.CREATED;
@@ -42,14 +43,27 @@ export const getContactByIdController = async (req, res, next) => {
   });
 };
 
-export const createContactController = async (req, res) => {
+export const createContactController = async (req, res, next) => {
+  const photo = req.file;
+  let photoUrl;
+
+  try {
+    photoUrl = await saveFileToCloudinary(photo);
+  } catch (error) {
+    return next(
+      createHttpError.InternalServerError(
+        'Failed to save photo, please try again later.',
+      ),
+    );
+  }
   const contact = await createContact({
     name: req.body.name,
     phoneNumber: req.body.phoneNumber,
     email: req.body.email,
-    isFavorite: req.body.isFavourite,
+    isFavourite: req.body.isFavourite,
     contactType: req.body.contactType,
     userId: req.user._id,
+    photo: photoUrl,
   });
 
   res.status(STATUS_CREATED).json({
@@ -62,7 +76,22 @@ export const createContactController = async (req, res) => {
 export const updateUserController = async (req, res, next) => {
   const { contactId } = req.params;
   const userId = req.user._id;
-  const result = await updateContact(contactId, userId, req.body);
+  const photo = req.file;
+  let photoUrl;
+
+  try {
+    photoUrl = await saveFileToCloudinary(photo);
+  } catch (error) {
+    return next(
+      createHttpError.InternalServerError(
+        'Failed to save photo, please try again later.',
+      ),
+    );
+  }
+  const result = await updateContact(contactId, userId, {
+    ...req.body,
+    photo: photoUrl,
+  });
 
   if (!result) {
     return next(createHttpError.NotFound('Contact not found'));

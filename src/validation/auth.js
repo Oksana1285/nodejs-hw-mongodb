@@ -4,7 +4,7 @@ import {
   VALIDATION_LENGTH,
 } from '../constants/constans.js';
 const { MIN_LENGTH, MAX_LENGTH } = VALIDATION_LENGTH;
-const { MIN, MAX, STRING, EMAIL } = JOI_MSG_VALIDATION;
+const { MIN, MAX, STRING, EMAIL, REQUIRED } = JOI_MSG_VALIDATION;
 
 export const registerUserSchema = Joi.object({
   name: Joi.string().min(MIN_LENGTH).max(MAX_LENGTH).required().messages({
@@ -45,5 +45,31 @@ export const loginUserSchema = Joi.object({
   password: Joi.string().min(MIN_LENGTH).max(MAX_LENGTH).required().messages({
     'string.min': MIN,
     'string.max': MAX,
+  }),
+});
+export const sendResetEmailSchema = Joi.object({
+  email: Joi.string()
+    .min(MIN_LENGTH)
+    .max(MAX_LENGTH)
+    .email({ tlds: { allow: false } })
+    .required()
+    .messages({
+      'string.base': STRING,
+      'string.min': MIN,
+      'string.max': MAX,
+      'string.email': EMAIL,
+    }),
+});
+
+export const resetPasswordSchema = Joi.object({
+  token: Joi.string().required().messages({
+    'string.base': STRING,
+    'any.required': REQUIRED,
+  }),
+  password: Joi.string().min(MIN_LENGTH).max(MAX_LENGTH).required().messages({
+    'string.base': STRING,
+    'string.min': MIN,
+    'string.max': MAX,
+    'any.required': REQUIRED,
   }),
 });
