@@ -45,11 +45,13 @@ export const getContactByIdController = async (req, res, next) => {
 
 export const createContactController = async (req, res, next) => {
   const photo = req.file;
+  console.log('Photo:', photo);
   let photoUrl;
 
   try {
     photoUrl = await saveFileToCloudinary(photo);
   } catch (error) {
+    console.error('Error sending email:', error);
     return next(
       createHttpError.InternalServerError(
         'Failed to save photo, please try again later.',
@@ -82,6 +84,7 @@ export const updateUserController = async (req, res, next) => {
   try {
     photoUrl = await saveFileToCloudinary(photo);
   } catch (error) {
+    console.error('Error saving email:', error);
     return next(
       createHttpError.InternalServerError(
         'Failed to save photo, please try again later.',

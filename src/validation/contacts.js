@@ -21,7 +21,7 @@ export const createContactSchema = Joi.object({
     .min(MIN_LENGTH)
     .max(MAX_LENGTH)
     .pattern(phoneNumberPattern)
-    .required()
+    .optional()
     .messages({
       'string.base': STRING,
       'string.min': MIN,
@@ -45,7 +45,7 @@ export const createContactSchema = Joi.object({
   contactType: Joi.string()
     .valid('work', 'home', 'personal')
     .default('personal')
-    .required()
+    .optional()
     .messages({
       'string.base': STRING,
       'any.only': ONE_OF,

@@ -115,6 +115,7 @@ export const sendResetToken = async (email) => {
       html,
     });
   } catch (error) {
+    console.error('Error sending email:', error);
     throw createHttpError.InternalServerError(
       'Failed to send the email, please try again later.',
     );
