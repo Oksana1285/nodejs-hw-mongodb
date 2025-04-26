@@ -38,6 +38,7 @@ contactsRouter.post(
 contactsRouter.patch(
   '/:contactId',
   jsonParser,
+  upload.single('photo'),
   isValidId('contactId'),
   validateBody(updateContactSchema),
   ctrlWrapper(updateUserController),
