@@ -48,16 +48,19 @@ export const createContactController = async (req, res, next) => {
   console.log('Photo:', photo);
   let photoUrl;
 
-  try {
-    photoUrl = await saveFileToCloudinary(photo);
-  } catch (error) {
-    console.error('Error sending email:', error);
-    return next(
-      createHttpError.InternalServerError(
-        'Failed to save photo, please try again later.',
-      ),
-    );
+  if (photo !== undefined) {
+    try {
+      photoUrl = await saveFileToCloudinary(photo);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      return next(
+        createHttpError.InternalServerError(
+          'Failed to save photo, please try again later.',
+        ),
+      );
+    }
   }
+
   const contact = await createContact({
     name: req.body.name,
     phoneNumber: req.body.phoneNumber,
@@ -65,7 +68,7 @@ export const createContactController = async (req, res, next) => {
     isFavourite: req.body.isFavourite,
     contactType: req.body.contactType,
     userId: req.user._id,
-    photo: photoUrl,
+    photo: photoUrl || '',
   });
 
   res.status(STATUS_CREATED).json({
@@ -81,16 +84,19 @@ export const updateUserController = async (req, res, next) => {
   const photo = req.file;
   let photoUrl;
 
-  try {
-    photoUrl = await saveFileToCloudinary(photo);
-  } catch (error) {
-    console.error('Error saving email:', error);
-    return next(
-      createHttpError.InternalServerError(
-        'Failed to save photo, please try again later.',
-      ),
-    );
+  if (photo !== undefined) {
+    try {
+      photoUrl = await saveFileToCloudinary(photo);
+    } catch (error) {
+      console.error('Error saving email:', error);
+      return next(
+        createHttpError.InternalServerError(
+          'Failed to save photo, please try again later.',
+        ),
+      );
+    }
   }
+
   const result = await updateContact(contactId, userId, {
     ...req.body,
     photo: photoUrl,
