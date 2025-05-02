@@ -82,7 +82,7 @@ parameters:
   #     Filter contacts based on the provided email address.
 
   - in: query
-    name: isFavorite
+    name: isFavourite
     schema:
       type: boolean
     example: true

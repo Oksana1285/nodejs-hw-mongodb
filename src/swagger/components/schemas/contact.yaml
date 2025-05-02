@@ -19,7 +19,7 @@ properties:
     type: string
     example: 'nik@example.com'
 
-  isFavorite:
+  isFavourite:
     description: 'Indicates whether the contact is marked as a favorite'
     type: boolean
     example: false
