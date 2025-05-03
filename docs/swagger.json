@@ -63,7 +63,7 @@
                     "description": "The contact's email address. This is optional.",
                     "example": "nik@example.com"
                   },
-                  "isFavorite": {
+                  "isFavourite": {
                     "type": "boolean",
                     "description": "Indicates whether the contact is marked as a favorite.",
                     "example": false
@@ -260,7 +260,7 @@
           },
           {
             "in": "query",
-            "name": "isFavorite",
+            "name": "isFavourite",
             "schema": {
               "type": "boolean"
             },
