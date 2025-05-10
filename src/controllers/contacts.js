@@ -8,17 +8,20 @@ import {
   deleteContact,
 } from '../services/contacts.js';
 
+import { parseAllParams } from '../utils/parseAllParams.js';
+
 const STATUS_OK = HTTP_STATUS.OK;
 const STATUS_CREATED = HTTP_STATUS.CREATED;
 const STATUS_NO_CONTENT = HTTP_STATUS.NO_CONTENT;
 
 export const getContactController = async (req, res) => {
-  const data = await getAllContacts();
+  const params = parseAllParams(req.query);
+  const contact = await getAllContacts(params);
 
   res.status(STATUS_OK).json({
     status: STATUS_OK,
     message: 'Successfully found contacts!',
-    data: data,
+    data: contact,
   });
 };
 
