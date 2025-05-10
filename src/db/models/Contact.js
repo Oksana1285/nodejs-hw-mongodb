@@ -27,9 +27,11 @@ const contactSchema = new Schema(
     contactType: {
       type: String,
       enum: ['work', 'home', 'personal'],
-      required: true,
+      required: false,
       default: 'personal',
     },
+    userId: { type: Schema.Types.ObjectId, required: true },
+    photo: { type: String },
   },
   { versionKey: false, timestamps: true },
 );
