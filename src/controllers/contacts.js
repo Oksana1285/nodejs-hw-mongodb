@@ -8,23 +8,29 @@ import {
   deleteContact,
 } from '../services/contacts.js';
 
+import { parseAllParams } from '../utils/parseAllParams.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+
 const STATUS_OK = HTTP_STATUS.OK;
 const STATUS_CREATED = HTTP_STATUS.CREATED;
 const STATUS_NO_CONTENT = HTTP_STATUS.NO_CONTENT;
 
 export const getContactController = async (req, res) => {
-  const data = await getAllContacts();
+  const params = parseAllParams(req.query);
+  const userId = req.user._id;
+  const contact = await getAllContacts(params, userId);
 
   res.status(STATUS_OK).json({
     status: STATUS_OK,
     message: 'Successfully found contacts!',
-    data: data,
+    data: contact,
   });
 };
 
 export const getContactByIdController = async (req, res, next) => {
   const { contactId } = req.params;
-  const contact = await getContactById(contactId);
+  const userId = req.user._id;
+  const contact = await getContactById(contactId, userId);
 
   if (!contact) {
     return next(createHttpError.NotFound('Contact not found'));
@@ -37,8 +43,33 @@ export const getContactByIdController = async (req, res, next) => {
   });
 };
 
-export const createContactController = async (req, res) => {
-  const contact = await createContact(req.body);
+export const createContactController = async (req, res, next) => {
+  const photo = req.file;
+  console.log('Photo:', photo);
+  let photoUrl;
+
+  if (photo !== undefined) {
+    try {
+      photoUrl = await saveFileToCloudinary(photo);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      return next(
+        createHttpError.InternalServerError(
+          'Failed to save photo, please try again later.',
+        ),
+      );
+    }
+  }
+
+  const contact = await createContact({
+    name: req.body.name,
+    phoneNumber: req.body.phoneNumber,
+    email: req.body.email,
+    isFavourite: req.body.isFavourite,
+    contactType: req.body.contactType,
+    userId: req.user._id,
+    photo: photoUrl || '',
+  });
 
   res.status(STATUS_CREATED).json({
     status: STATUS_CREATED,
@@ -49,8 +80,27 @@ export const createContactController = async (req, res) => {
 
 export const updateUserController = async (req, res, next) => {
   const { contactId } = req.params;
+  const userId = req.user._id;
+  const photo = req.file;
+  let photoUrl;
 
-  const result = await updateContact(contactId, req.body);
+  if (photo !== undefined) {
+    try {
+      photoUrl = await saveFileToCloudinary(photo);
+    } catch (error) {
+      console.error('Error saving email:', error);
+      return next(
+        createHttpError.InternalServerError(
+          'Failed to save photo, please try again later.',
+        ),
+      );
+    }
+  }
+
+  const result = await updateContact(contactId, userId, {
+    ...req.body,
+    photo: photoUrl,
+  });
 
   if (!result) {
     return next(createHttpError.NotFound('Contact not found'));
@@ -61,14 +111,15 @@ export const updateUserController = async (req, res, next) => {
   res.status(status).json({
     status: status,
     message: 'Successfully patched a contact!',
-    data: result.contact,
+    data: result.data,
   });
 };
 
 export const deleteContactController = async (req, res, next) => {
   const { contactId } = req.params;
+  const userId = req.user._id;
 
-  const contact = await deleteContact(contactId);
+  const contact = await deleteContact(contactId, userId);
 
   if (!contact) {
     return next(createHttpError.NotFound('Contact not found'));
